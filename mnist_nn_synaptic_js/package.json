@@ -1,0 +1,28 @@
+{
+  "name": "mnist_nn_synaptic_js",
+  "version": "0.1.0",
+  "description": "MNIST classifier using synaptic.js",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AravindVasudev/Machine-Learning-Playground.git"
+  },
+  "keywords": [
+    "mnist",
+    "ann",
+    "synaptic"
+  ],
+  "author": "aravindvasudev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AravindVasudev/Machine-Learning-Playground/issues"
+  },
+  "homepage": "https://github.com/AravindVasudev/Machine-Learning-Playground#readme",
+  "dependencies": {
+    "mnist": "^1.0.5",
+    "synaptic": "^1.0.10"
+  }
+}
