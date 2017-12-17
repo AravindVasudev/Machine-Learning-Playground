@@ -1,5 +1,5 @@
 venv/
 apple.jpg
-haarcascade_eye.xml
-haarcascade_frontalface_default.xml
+OpenCV/face_cascade/haarcascade_eye.xml
+OpenCV/face_cascade/haarcascade_frontalface_default.xml
 DogsVsCats/dataset/
