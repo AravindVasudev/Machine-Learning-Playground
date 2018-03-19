@@ -10,7 +10,11 @@ window.addEventListener('load', () => {
                   1 / 9, 1 / 9, 1 / 9];
 
     const edge = [ -1, -1, -1,
-                   -1,  8, -1,
+                   -1,  9, -1,
+                   -1, -1, -1];
+
+    const green = [ 1,  1,  1,
+                    1, .7, -1,
                    -1, -1, -1];
 
     navigator.getUserMedia({video: true},
@@ -19,10 +23,32 @@ window.addEventListener('load', () => {
 
     setInterval(() => {
         filteredVideoCtx.drawImage(feedVideo, 0, 0, filteredVideoWidth, filteredVideoHeight);
-        filteredVideoCtx.putImageData(convolve(filteredVideoCtx,
-          filteredVideoCtx.getImageData(0, 0, filteredVideoWidth, filteredVideoHeight), blur), 0, 0); 
+        let image  = filteredVideoCtx.getImageData(0, 0, filteredVideoWidth, filteredVideoHeight);
+        let kernel = edge;
+
+        let filtered = convolve(filteredVideoCtx, threshold(image, 100), kernel);
+        filteredVideoCtx.putImageData(filtered, 0, 0); 
     }, 1000 / 30);
 });
+
+function threshold(image, threshold) {
+  let pixels = image.data;
+  for (let i = 0; i < pixels.length; i += 4) {
+    let v = (0.2126 * pixels[i] + 0.7152 * pixels[i + 1] + 0.0722 * pixels[i + 2] >= threshold) ? 255 : 0;
+    pixels[i] = pixels[i + 1] = pixels[i + 2] = v;
+  }
+
+  return image; 
+}
+
+function grayscale(image) {
+  let pixels = image.data;
+  for (let i = 0; i < pixels.length; i += 4) {
+    pixels[i] = pixels[i + 1] = pixels[i + 2] = 0.2126 * pixels[i] + 0.7152 * pixels[i + 1] + 0.0722 * pixels[i + 2];
+  }
+
+  return image;
+}
 
 function convolve(ctx, pixels, weights) {
     const side     = Math.round(Math.sqrt(weights.length));
