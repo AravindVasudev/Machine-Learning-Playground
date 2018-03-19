@@ -5,17 +5,25 @@ window.addEventListener('load', () => {
     const filteredVideoHeight = filteredVideo.height;
     const filteredVideoWidth  = filteredVideo.width;
 
-    const blur = [1 / 9, 1 / 9, 1 / 9,
-                  1 / 9, 1 / 9, 1 / 9,
-                  1 / 9, 1 / 9, 1 / 9];
+    const blur = [ 1 / 9, 1 / 9, 1 / 9,
+                   1 / 9, 1 / 9, 1 / 9,
+                   1 / 9, 1 / 9, 1 / 9 ];
+
+    const sharpen = [ 0, -1,  0,
+                     -1,  5, -1,
+                      0, -1,  0 ];
 
     const edge = [ -1, -1, -1,
                    -1,  9, -1,
-                   -1, -1, -1];
+                   -1, -1, -1 ];
+
+    const edgeDiagonal = [ 0,  1,  0,
+                          -1,  1,  1,
+                           0, -1,  0 ];
 
     const green = [ 1,  1,  1,
                     1, .7, -1,
-                   -1, -1, -1];
+                   -1, -1, -1 ];
 
     navigator.getUserMedia({video: true},
         stream => feedVideo.srcObject = stream,
