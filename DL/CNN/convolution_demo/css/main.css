@@ -8,8 +8,7 @@ body {
 
     display: flex;
     justify-content: center;
-
-    margin-top: 2%;
+    align-items: center;
 }
 
 #feed, #filtered {

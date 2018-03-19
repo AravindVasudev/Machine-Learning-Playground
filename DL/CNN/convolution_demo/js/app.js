@@ -34,10 +34,19 @@ window.addEventListener('load', () => {
         let image  = filteredVideoCtx.getImageData(0, 0, filteredVideoWidth, filteredVideoHeight);
         let kernel = edge;
 
-        let filtered = convolve(filteredVideoCtx, threshold(image, 100), kernel);
-        filteredVideoCtx.putImageData(filtered, 0, 0); 
+        // let filtered = convolve(filteredVideoCtx, threshold(image, 100), kernel);
+        filteredVideoCtx.putImageData(redify(image), 0, 0); 
     }, 1000 / 30);
 });
+
+function redify(image) {
+  let pixels = image.data;
+  for (let i = 0; i < pixels.length; i += 4) {
+    pixels[i + 1] = pixels[i + 2] = 0;
+  }
+
+  return image;
+}
 
 function threshold(image, threshold) {
   let pixels = image.data;
