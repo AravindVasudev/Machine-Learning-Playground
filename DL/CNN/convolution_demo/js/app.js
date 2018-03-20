@@ -13,6 +13,10 @@ window.addEventListener('load', () => {
                      -1,  5, -1,
                       0, -1,  0 ];
 
+    const edgeSimple = [ 0,  0,  0,
+                        -1,  2,  0,
+                         0,  0,  0 ];
+
     const edge = [ -1, -1, -1,
                    -1,  9, -1,
                    -1, -1, -1 ];
@@ -32,10 +36,10 @@ window.addEventListener('load', () => {
     setInterval(() => {
         filteredVideoCtx.drawImage(feedVideo, 0, 0, filteredVideoWidth, filteredVideoHeight);
         let image  = filteredVideoCtx.getImageData(0, 0, filteredVideoWidth, filteredVideoHeight);
-        let kernel = edge;
+        let kernel = edgeSimple;
 
-        // let filtered = convolve(filteredVideoCtx, threshold(image, 100), kernel);
-        filteredVideoCtx.putImageData(redify(image), 0, 0); 
+        // let filtered = convolve(filteredVideoCtx, grayscale(image), kernel);
+        filteredVideoCtx.putImageData(sobel(filteredVideoCtx, image), 0, 0); 
     }, 1000 / 30);
 });
 
@@ -67,12 +71,40 @@ function grayscale(image) {
   return image;
 }
 
-function convolve(ctx, pixels, weights) {
+function sobel(ctx, image) {
+  const verticalSobelKernel   = [ -1, -2, -1,
+                                   0,  0,  0,
+                                   1,  2,  1 ];
+
+  const horizontalSobelKernel = [ -1,  0,  1,
+                                  -2,  0,  2,
+                                  -1,  0,  1 ];
+  
+  image          = grayscale(image);
+  let vertical   = convolve(ctx, image, verticalSobelKernel).data;
+  let horizontal = convolve(ctx, image, horizontalSobelKernel).data;
+
+  const sobelImage  = ctx.createImageData(image.width, image.height);
+  let sobelPixels   = sobelImage.data;
+  for (let i = 0; i < sobelPixels.length; i += 4) {
+    let vpx = Math.abs(vertical[i]);
+    let hpx = Math.abs(horizontal[i]);
+
+    sobelPixels[i + 0] = vpx;
+    sobelPixels[i + 1] = hpx;
+    sobelPixels[i + 2] = (vpx + hpx) / 4;
+    sobelPixels[i + 3] = 255;
+  }
+
+  return sobelImage;
+}
+
+function convolve(ctx, image, weights) {
     const side     = Math.round(Math.sqrt(weights.length));
     const halfSide = Math.floor(side / 2);
-    const src      = pixels.data;
-    const w        = pixels.width;
-    const h        = pixels.height;
+    const src      = image.data;
+    const w        = image.width;
+    const h        = image.height;
 
     const output = ctx.createImageData(w, h);
     let dst      = output.data;
@@ -90,7 +122,7 @@ function convolve(ctx, pixels, weights) {
             if (scy >= 0 && scy < h && scx >= 0 && scx < w) {
               let srcOff = (scy * w + scx) * 4;
               let wt = weights[cy * side + cx];
-              r += src[srcOff] * wt;
+              r += src[srcOff + 0] * wt;
               g += src[srcOff + 1] * wt;
               b += src[srcOff + 2] * wt;
               a += src[srcOff + 3] * wt;
@@ -98,7 +130,7 @@ function convolve(ctx, pixels, weights) {
           }
         }
 
-        dst[dstOff] = r;
+        dst[dstOff + 0] = r;
         dst[dstOff + 1] = g;
         dst[dstOff + 2] = b;
         dst[dstOff + 3] = a;
